@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Stand;
 
 class User extends Authenticatable
 {
@@ -44,5 +46,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+        // Fichier: app/Models/User.php
+    public function stands(): HasMany
+    {
+        return $this->hasMany(Stand::class);
+    }
+
+        // Fichier: app/Models/Stand.php
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

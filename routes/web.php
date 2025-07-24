@@ -1,20 +1,37 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PublicStandController; 
+use App\Http\Controllers\StandController;
 
-Route::get('/', [PublicStandController::class, 'index'])->name('home');
+// Page d'accueil publique
+Route::get('/', function () {
+    return view('home');
+})->name('home');
 
+// Formulaire d'inscription (inscription stand entrepreneur)
+Route::get('/inscription', function () {
+    return view('auth.register');
+})->name('register');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Formulaire de connexion
+Route::get('/connexion', function () {
+    return view('auth.login');
+})->name('login');
 
+// Page publique liste des stands approuvés
+Route::get('/stands', [StandController::class, 'index'])->name('stands.public');
+
+// Page publique détail d'un stand
+Route::get('/stands/{stand}', [StandController::class, 'show'])->name('stands.show');
+
+// Routes protégées par auth middleware (dashboard, logout)
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
-require __DIR__.'/auth.php';
+    Route::post('/logout', function () {
+        auth()->logout();
+        return redirect()->route('home');
+    })->name('logout');
+});
